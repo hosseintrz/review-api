@@ -2,31 +2,31 @@ package main
 
 import (
 	"fmt"
-	"github.com/hosseintrz/suggestion_api/internal/db"
+	"github.com/hosseintrz/suggestion_api/internal/config"
 	"github.com/hosseintrz/suggestion_api/internal/server"
-	"os"
+	"github.com/hosseintrz/suggestion_api/internal/server/routes"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	store := db.NewStore()
-	s := server.NewServer(store)
+	conf, err := config.GetConfig()
+	logFatal(err)
 
-	s.Router.POST("/signup", s.Signup)
-	s.Router.POST("/login", s.Login)
-	s.Router.POST("/suggestions", s.SubmitSuggestion)
-	s.Router.GET("/suggestions", s.GetSuggestions)
-	s.Router.GET("/", s.HealthCheck)
+	s, err := server.NewServer(conf)
+	logFatal(err)
+	routes.SetupRoutes(s, conf)
 
-	port := "80"
-	if val, ok := os.LookupEnv("HTTP_PORT"); ok {
-		port = val
-	}
-
-	addr := "0.0.0.0:" + port
-	errChan := s.Serve(addr)
+	logrus.Infof(conf.ServerAddress)
+	errChan := s.Serve(conf.ServerAddress)
 	select {
 	case err := <-errChan:
 		fmt.Println(err.Error())
 	}
 
+}
+
+func logFatal(err error) {
+	if err != nil {
+		logrus.Fatalf(err.Error())
+	}
 }
