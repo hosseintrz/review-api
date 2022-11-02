@@ -32,7 +32,7 @@ func (h *ReviewHandler) SubmitReview(c *gin.Context) {
 	userObj, _ := c.Get("user")
 	user := userObj.(db.User)
 	logrus.Info("username is ", user.Username)
-	
+
 	var body SubmitReviewReq
 	err := c.ShouldBind(&body)
 	if err != nil {
