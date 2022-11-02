@@ -9,10 +9,20 @@ import (
 	"time"
 )
 
-type Suggestion struct {
-	ID     int64          `json:"id"`
-	UserID int64          `json:"user_id"`
-	Text   sql.NullString `json:"text"`
+type Movie struct {
+	ID       int64          `json:"id"`
+	Name     string         `json:"name"`
+	Year     int32          `json:"year"`
+	Director sql.NullString `json:"director"`
+	Rating   sql.NullString `json:"rating"`
+}
+
+type Review struct {
+	ID      int64          `json:"id"`
+	UserID  int64          `json:"user_id"`
+	MovieID int64          `json:"movie_id"`
+	Rating  sql.NullString `json:"rating"`
+	Text    sql.NullString `json:"text"`
 }
 
 type User struct {
